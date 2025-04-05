@@ -1,0 +1,23 @@
+#version: "3.8"
+services:
+  mongodb:
+    image: mongo:8.0.6
+    container_name: fullstack-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+       - ./mongodb/data:/data/db  # 👈 relative to full-stack/backend/
+
+  backend:
+    build: .
+    container_name: fullstack-backend
+    ports:
+      - "8080:8080"
+    environment:
+      MONGO_URI: mongodb://admin:admin@mongodb:27017
+      MONGO_DB: demo
+    depends_on:
+      - mongodb

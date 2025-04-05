@@ -1,0 +1,13 @@
+{
+    "name": "fullstack-backend",
+    "version": "1.0.0",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev:docker": "nodemon --watch . --ext js,json,html,css --exec 'docker stop fullstack-backend-local && docker rm fullstack-backend-local && docker rmi franciszabala/fullstack-backend || true && docker build -t franciszabala/fullstack-backend . && docker run -p 28080:8080 --name fullstack-backend-local franciszabala/fullstack-backend'"
+    },
+    "dependencies": {
+        "express": "^5.1.0",
+        "nodemon": "^3.1.9"
+    }
+}
