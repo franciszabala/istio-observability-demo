@@ -1,0 +1,12 @@
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: backend-access-logs
+  namespace: fullstack
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  accessLogging:
+    - providers:
+        - name: otel
