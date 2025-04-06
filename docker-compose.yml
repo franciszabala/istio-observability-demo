@@ -9,15 +9,18 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
     volumes:
-       - ./mongodb/data:/data/db  # 👈 relative to full-stack/backend/
+     - mongo-data:/data/db                  # ✅ named volume for clean permissions
+     - ./mongodb/init:/docker-entrypoint-initdb.d  # ✅ keep init scripts bind-mounted
 
   backend:
     build: .
     container_name: fullstack-backend
     ports:
-      - "8080:8080"
+      - "28080:8080"
     environment:
       MONGO_URI: mongodb://admin:admin@mongodb:27017
       MONGO_DB: demo
     depends_on:
       - mongodb
+volumes:
+  mongo-data:

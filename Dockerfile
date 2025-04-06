@@ -5,5 +5,6 @@ COPY package*.json ./
 RUN npm install
 
 COPY server.js .
+COPY seed.js . 
 
 CMD ["node", "server.js"]
