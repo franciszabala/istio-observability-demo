@@ -1,0 +1,40 @@
+apiVersion: v1
+data:
+  mesh: |-
+    defaultConfig:
+      discoveryAddress: istiod.istio-system.svc:15012
+      tracing: {}
+    defaultProviders:
+      metrics:
+      - prometheus
+    enablePrometheusMerge: true
+    enableTracing: true
+    extensionProviders:
+    - name: jaeger
+      opentelemetry:
+        port: 4317
+        service: jaeger-collector.istio-system.svc.cluster.local
+    rootNamespace: istio-system
+    trustDomain: cluster.local
+  meshNetworks: 'networks: {}'
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-04-01T13:28:23Z"
+  labels:
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: istiod
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istiod-1.24.3
+    install.operator.istio.io/owning-resource: unknown
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.24.3
+    release: istio
+  name: istio
+  namespace: istio-system
+  resourceVersion: "2152"
+  uid: 7ecc165b-a2c7-4bf3-a4af-c4c7cc037a7c

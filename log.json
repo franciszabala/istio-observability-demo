@@ -1,0 +1,39 @@
+{
+    "resourceLogs": [
+      {
+        "resource": {
+          "attributes": [
+            {
+              "key": "service.name",
+              "value": { "stringValue": "manual-test-service" }
+            }
+          ]
+        },
+        "scopeLogs": [
+          {
+            "scope": {
+              "name": "manual-log-test",
+              "version": "0.1.0"
+            },
+            "logRecords": [
+              {
+                "timeUnixNano": "1680000000000000000",
+                "severityNumber": 9,
+                "severityText": "Info",
+                "body": {
+                  "stringValue": "Hello from manual log test!"
+                },
+                "attributes": [
+                  {
+                    "key": "env",
+                    "value": { "stringValue": "local" }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

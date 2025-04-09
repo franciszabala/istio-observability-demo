@@ -9,20 +9,35 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:admin@localhost:2701
 const MONGO_DB = process.env.MONGO_DB || 'demo';
 
 let db;
+const mongoClient = new MongoClient(MONGO_URI);
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 3000; // milliseconds
 
 app.use(express.json());
 
-MongoClient.connect(MONGO_URI, { useUnifiedTopology: true })
-  .then(client => {
-    console.log('✅ Connected to MongoDB');
-    db = client.db(MONGO_DB);
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection failed:', err);
-  });
+async function connectWithRetry() {
+  for (let i = 0; i < MAX_RETRIES; i++) {
+    try {
+      await mongoClient.connect();
+      db = mongoClient.db(MONGO_DB);
+      console.log('✅ Connected to MongoDB');
+      return;
+    } catch (err) {
+      console.error(`❌ MongoDB connection failed. Retry ${i + 1}/${MAX_RETRIES}...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+    }
+  }
+  console.error('❌ MongoDB connection failed after multiple retries.');
+  process.exit(1); // Exit the process if connection fails after retries
+}
+
+connectWithRetry();
 
 // Save data
 app.post('/data', async (req, res) => {
+  if (!db) {
+    return res.status(503).json({ error: 'Database connection not established' });
+  }
   try {
     const payload = req.body;
     const result = await db.collection('logs').insertOne(payload);
@@ -36,8 +51,12 @@ app.post('/data', async (req, res) => {
 
 // Get all data
 app.get('/data', async (req, res) => {
+  if (!db) {
+    return res.status(503).json({ error: 'Database connection not established' });
+  }
   try {
     const docs = await db.collection('logs').find().toArray();
+    console.log('📥 Received /data request');
     res.json(docs);
   } catch (err) {
     console.error(err);
@@ -46,7 +65,6 @@ app.get('/data', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  console.log(`[GET /] Request received from ${req.ip}`);
   res.send('Hello from backend!');
 });
 

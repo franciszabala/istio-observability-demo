@@ -1,0 +1,42 @@
+##This command temporarily reconfigures your shell’s Docker CLI to talk to Minikube’s internal Docker daemon, 
+##instead of your local machine’s Docker daemon.
+eval $(minikube docker-env)
+docker info | grep "Docker Root Dir\|Name\|Server Version"
+docker build -t fullstack-backend .
+
+kubectl rollout restart deployment backend -n fullstack
+
+
+kubectl create namespace fullstack
+kubectl label namespace fullstack istio-injection=enabled
+
+
+ku get configmap istio -n istio-system -o yaml
+
+kubectl edit configmap istio -n istio-system
+
+
+ku edit configmap istio -n istio-system
+
+## Outputs the IP Address of the istio-ingressgateway
+kubectl get svc istio-ingressgateway -n istio-system
+
+## Connectivity testing if we can access opentelemetry-collector
+curl -X POST http://localhost:4318/v1/logs \
+  -H "Content-Type: application/json" \
+  --data @log.json
+
+## Assumes that minikube tunnel has started
+## Get ClusterIP address of opentelemetry-collector
+ku get svc -n observability
+
+## CURL command to send test data to opentelemetry-collector
+curl -X POST http://10.98.74.144:4318/v1/logs \
+-H "Content-Type: application/json" \
+--data @log.json
+
+## Check logs of opentelemetry-collector
+ku logs -n observability deployment/opentelemetry-collector -f
+
+## Adds ip address to localhost. istio must be installed with the demo profile and minikube tunnel must be running.
+./update-hosts.sh "minikube -p <you-custom-profile-name> kubectl --"

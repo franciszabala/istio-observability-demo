@@ -9,4 +9,4 @@ spec:
       app: backend
   accessLogging:
     - providers:
-        - name: otel
+        - name: opentelemetry
